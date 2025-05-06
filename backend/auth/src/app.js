@@ -23,7 +23,10 @@ app.set('trust proxy', true);
 connectDB().then(() => {
     app.use('/api', mainRoute);
     app.use(errorHandler);
-
+    
+    app.get('/', (req, res) => {
+        res.send('Gym Auth API is running');
+      });
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
