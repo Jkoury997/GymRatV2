@@ -1,5 +1,5 @@
 const ExerciseUser = require('../database/models/ExerciseUser.js');
-const WorkoutRecord = require('../models/WorkoutRecord');
+const WorkoutRecord = require('../database/models/WorkoutRecord');
 
 const createExercise = async (data) => {
   return await ExerciseUser.create(data);
