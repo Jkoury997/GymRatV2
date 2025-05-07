@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Dumbbell, Plus, TrendingUp, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ExerciseFilter } from "@/components/excersice/filter"
+//import { ExerciseFilter } from "@/components/excersice/filter"
 
 
 
