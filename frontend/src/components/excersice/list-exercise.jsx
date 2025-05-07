@@ -21,7 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuItem,
+  DropdownMenuItem, // ESTA línea es crítica
 } from "@/components/ui/dropdown-menu";
 
 import { ExerciseFilter } from "@/components/excersice/filter";
