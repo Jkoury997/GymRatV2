@@ -53,7 +53,7 @@ const updateExercise = async (req, res, next) => {
 const deleteExercise = async (req, res, next) => {
   try {
     await ExerciseService.deleteExercise(req.params.id);
-    res.status(204).send();
+    res.status(200).json({ message: "Ejercicio eliminado correctamente" });
   } catch (err) {
     next(err);
   }

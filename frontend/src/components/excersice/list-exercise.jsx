@@ -75,7 +75,8 @@ export function ExerciseList() {
 
         const workoutMap = {};
         workouts.forEach((w) => {
-          const id = w.exerciseUserId._id;
+          console.log(w)
+          const id = w._id;
           if (!workoutMap[id]) workoutMap[id] = [];
           workoutMap[id].push({
             date: w.date,
