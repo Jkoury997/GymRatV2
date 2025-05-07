@@ -20,9 +20,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+
 import { ExerciseFilter } from "@/components/excersice/filter";
 
 const iconMap = {
