@@ -61,7 +61,7 @@ export default function LoginPage() {
               <Dumbbell className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">GymTracker</CardTitle>
+          <CardTitle className="text-2xl font-bold">Gymo</CardTitle>
           <CardDescription>Inicia sesión para acceder a tu cuenta</CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,6 +79,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-12"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -100,6 +101,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10 h-12"
+                  autoComplete="current-password"
                   required
                 />
                 <Button

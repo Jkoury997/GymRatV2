@@ -1,4 +1,5 @@
 const ExerciseUser = require('../database/models/ExerciseUser.js');
+const WorkoutRecord = require('../models/WorkoutRecord');
 
 const createExercise = async (data) => {
   return await ExerciseUser.create(data);
@@ -21,6 +22,10 @@ const updateExercise = async (id, data) => {
 };
 
 const deleteExercise = async (id) => {
+  // Elimina todos los registros asociados a este ejercicio
+  await WorkoutRecord.deleteMany({ exerciseUserId: id });
+
+  // Luego elimina el ejercicio personalizado
   return await ExerciseUser.findByIdAndDelete(id);
 };
 

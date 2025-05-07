@@ -25,7 +25,7 @@ export default function Home() {
                 <Dumbbell className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">GymTracker</h1>
+                <h1 className="text-2xl font-bold tracking-tight">Gymo</h1>
                 <p className="text-muted-foreground text-sm">Registra tus pesos y sigue tu progreso</p>
               </div>
             </div>

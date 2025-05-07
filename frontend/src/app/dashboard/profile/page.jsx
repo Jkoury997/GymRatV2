@@ -13,7 +13,7 @@ export default function PerfilPage() {
   const router = useRouter();
 
   const [profile, setProfile] = useState({});
-  const [students, setStudents] = useState({});
+  const [students, setStudents] = useState([]);
 
   useEffect(() => {
     fetchProfile();

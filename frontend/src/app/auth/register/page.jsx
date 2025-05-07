@@ -95,7 +95,7 @@ export default function RegistroPage() {
               <Dumbbell className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">GymTracker</CardTitle>
+          <CardTitle className="text-2xl font-bold">Gymo</CardTitle>
           <CardDescription>Crea una nueva cuenta para comenzar</CardDescription>
         </CardHeader>
         <CardContent>

@@ -354,6 +354,7 @@ const requestOtp = async () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="pl-10 pr-10 h-12"
+                    autoComplete="new-password"
                     required
                   />
                   <Button
@@ -381,6 +382,7 @@ const requestOtp = async () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10 pr-10 h-12"
+                    autoComplete="new-password"
                     required
                   />
                   <Button
