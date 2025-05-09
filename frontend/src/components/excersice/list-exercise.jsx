@@ -21,7 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuItem, // ESTA línea es crítica
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
 import { ExerciseFilter } from "@/components/excersice/filter";
@@ -75,8 +75,8 @@ export function ExerciseList() {
 
         const workoutMap = {};
         workouts.forEach((w) => {
-          console.log(w)
-          const id = w._id;
+          const id = w.exerciseUserId?._id;
+          if (!id) return;
           if (!workoutMap[id]) workoutMap[id] = [];
           workoutMap[id].push({
             date: w.date,
@@ -185,6 +185,11 @@ export function ExerciseList() {
     }
   };
 
+  const getMaxWeight = (record) =>
+    record?.series?.length
+      ? Math.max(...record.series.map((s) => s.weight ?? 0))
+      : 0;
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <ExerciseFilter
@@ -196,125 +201,115 @@ export function ExerciseList() {
       />
 
       {filteredItems.map((exercise) => {
-        // Ordenar registros: más reciente a más antiguo
         const sortedRecords = [...exercise.records].sort(
           (a, b) => new Date(b.date) - new Date(a.date)
         );
-
-        // Último y penúltimo registro
         const lastRecord = sortedRecords[0];
         const prevRecord = sortedRecords[1];
-
-        // Cálculo de pesos
-        const lastMax = lastRecord
-          ? Math.max(...lastRecord.series.map((s) => s.weight))
-          : 0;
-        const prevMax = prevRecord
-          ? Math.max(...prevRecord.series.map((s) => s.weight))
-          : 0;
-        const diff = lastRecord && prevRecord ? lastMax - prevMax : 0;
-
+        const lastMax = getMaxWeight(lastRecord);
+        const prevMax = getMaxWeight(prevRecord);
+        const diff = lastMax - prevMax;
         const Icon = iconMap[exercise.icon] || Dumbbell;
 
         return (
           <Card
-            key={exercise.id}
-            className="overflow-hidden hover:shadow-md transition-all border pt-0 pb-2"
-          >
-            <div className="bg-primary/5 p-3 flex items-center justify-between border-b">
-              <div className="flex items-center gap-2">
-                <div className="bg-primary/10 p-1.5 rounded-md">
-                  <Icon className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium">
-                  {exercise.categoryName}
-                </span>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full"
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <Link href={`/dashboard/exercise/${exercise.id}`}>
-                    <DropdownMenuItem>Ver detalles</DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => setExerciseToDelete(exercise)}
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    Eliminar
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+  key={exercise.id}
+  className="block overflow-hidden hover:shadow-md transition-all border pt-0 pb-1"
+>
+  
+  <div className="bg-primary/5 p-2 flex items-center justify-between border-b">
+    <div className="flex items-center gap-2">
+      <div className="bg-primary/10 p-1 rounded-md">
+        <Icon className="h-3.5 w-3.5 text-primary" />
+      </div>
+      <span className="text-xs font-medium">{exercise.categoryName}</span>
+    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 rounded-full"
+        >
+          <MoreVertical className="h-3.5 w-3.5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <Link href={`/dashboard/exercise/${exercise.id}`}>
+          <DropdownMenuItem>Ver detalles</DropdownMenuItem>
+        </Link>
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() => setExerciseToDelete(exercise)}
+        >
+          <Trash className="mr-2 h-4 w-4" />
+          Eliminar
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
 
-            <CardContent className="p-4 pt-0">
-              <h3 className="text-lg font-semibold mb-3">{exercise.name}</h3>
+  <CardContent className="p-3">
+    <h3 className="text-base font-semibold mb-2">{exercise.name}</h3>
 
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <p className="text-xs text-muted-foreground">
-                    Último peso máximo:
-                  </p>
-                  <p className="text-2xl font-bold">
-                    {lastRecord ? `${lastMax} kg` : "Sin registros"}
-                  </p>
-                  {lastRecord?.series.length > 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      {lastRecord.series.length}{" "}
-                      {lastRecord.series.length === 1 ? "serie" : "series"} en
-                      total
-                    </p>
-                  )}
-                </div>
+    <div className="flex justify-between items-center mb-2">
+      <div>
+        <p className="text-[11px] text-muted-foreground mb-0.5">
+          Último peso máximo:
+        </p>
+        <p className="text-lg font-bold">
+          {lastMax > 0 ? `${lastMax} kg` : "Sin registros"}
+        </p>
+        {lastRecord?.series?.length > 0 && (
+          <p className="text-[11px] text-muted-foreground">
+            {lastRecord.series.length}{" "}
+            {lastRecord.series.length === 1 ? "serie" : "series"}
+          </p>
+        )}
+      </div>
 
-                {diff !== 0 && (
-                  <div
-                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                      diff > 0
-                        ? "text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400"
-                        : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400"
-                    }`}
-                  >
-                    {diff > 0 ? "+" : ""}
-                    {diff} kg
-                  </div>
-                )}
-              </div>
+      {diff !== 0 && (
+        <div
+          className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+            diff > 0
+              ? "text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400"
+              : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400"
+          }`}
+        >
+          {diff > 0 ? "+" : ""}
+          {diff} kg
+        </div>
+      )}
+    </div>
 
-              {lastRecord?.date && (
-                <p className="text-xs text-muted-foreground mb-3">
-                  Último entrenamiento:{" "}
-                  {new Date(lastRecord.date).toLocaleDateString("es-AR", {
-                    timeZone: "UTC",
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              )}
+    {lastRecord?.date && (
+      <p className="text-[11px] text-muted-foreground mb-2">
+        Último entrenamiento:{" "}
+        {new Date(lastRecord.date).toLocaleDateString("es-AR", {
+          timeZone: "UTC",
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}
+      </p>
+    )}
 
-              <Link href={`/dashboard/exercise/${exercise.id}`}>
-                <Button
-                  variant="outline"
-                  className="w-full group hover:border-primary/50"
-                >
-                  Ver progreso
-                  <ArrowUpRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+    <Link href={`/dashboard/exercise/${exercise.id}`}>
+      <Button
+        variant="outline"
+        className="w-full h-8 text-sm group hover:border-primary/50"
+      >
+        Ver progreso
+        <ArrowUpRight className="ml-2 h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+      </Button>
+    </Link>
+  </CardContent>
+</Card>
+
         );
       })}
+
       {exerciseToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 w-[90%] max-w-sm shadow-lg text-center">

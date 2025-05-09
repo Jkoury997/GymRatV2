@@ -30,11 +30,12 @@ export default function TrainingDialog({
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [series, setSeries] = useState([{ weight: 0, reps: 10 }]);
+  const [series, setSeries] = useState([{ weight: "", reps: "" }]);
+
 
   const updateSeries = (index, field, value) => {
     const updated = [...series];
-    updated[index][field] = value;
+    updated[index][field] = value ?? ""; // fuerza string vacío si viene null
     setSeries(updated);
   };
 
@@ -154,36 +155,31 @@ export default function TrainingDialog({
                         Peso (kg)
                       </Label>
                       <Input
-                        id={`weight-${index}`}
-                        type="number"
-                        value={serie.weight}
-                        onChange={(e) =>
-                          updateSeries(
-                            index,
-                            "weight",
-                            Number.parseFloat(e.target.value) || 0
-                          )
-                        }
-                        className="h-9"
-                      />
+  id={`weight-${index}`}
+  type="numeric"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={serie.weight}
+  onChange={(e) => updateSeries(index, "weight", e.target.value)}
+  className="h-9"
+  placeholder="10 kg"
+/>
+
                     </div>
                     <div>
                       <Label htmlFor={`reps-${index}`} className="text-xs">
                         Repeticiones
                       </Label>
                       <Input
-                        id={`reps-${index}`}
-                        type="number"
-                        value={serie.reps}
-                        onChange={(e) =>
-                          updateSeries(
-                            index,
-                            "reps",
-                            Number.parseInt(e.target.value) || 0
-                          )
-                        }
-                        className="h-9"
-                      />
+  id={`reps-${index}`}
+  type="numeric"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={serie.reps}
+  onChange={(e) => updateSeries(index, "reps", e.target.value)}
+  className="h-9"
+  placeholder="10"
+/>
                     </div>
                   </div>
                   {series.length > 1 && (

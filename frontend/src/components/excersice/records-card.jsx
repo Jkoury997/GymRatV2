@@ -1,6 +1,5 @@
 "use client";
-
-import React from "react";
+import { useState, useEffect } from "react"; // si aún no lo tenés
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,9 +9,47 @@ export default function HistoryListItem({ record, isExpanded, toggleExpandRecord
   const maxWeightInRecord = Math.max(...record.series.map((s) => s.weight));
   const prevMaxWeight = previousRecord ? Math.max(...previousRecord.series.map((s) => s.weight)) : 0;
   const difference = previousRecord ? maxWeightInRecord - prevMaxWeight : 0;
+  
+const [editableSeries, setEditableSeries] = useState([]);
+const [editableNotes, setEditableNotes] = useState("");
+
+
+useEffect(() => {
+  if (isExpanded) {
+    setEditableSeries(record.series);
+    setEditableNotes(record.notes || "");
+  }
+}, [isExpanded]);
+
+const handleEditRecord = async () => {
+  const updatedData = {
+    notes: editableNotes,
+    series: editableSeries,
+  };
+
+  try {
+    const res = await fetch(`/api/gymtracker/workout/edite/${record._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!res.ok) throw new Error("Error al actualizar");
+    const result = await res.json();
+    console.log("Actualizado:", result);
+    alert("Registro actualizado con éxito");
+  } catch (err) {
+    console.error(err);
+    alert("Hubo un error al actualizar el registro");
+  }
+};
+
+  
 
   return (
-    <Card className="overflow-hidden border p-0">
+    <Card className="block overflow-hidden hover:shadow-md transition-all border pt-0 pb-1">
       <div
         className="p-3 flex items-center justify-between bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
         onClick={() => toggleExpandRecord(record.date)}
@@ -85,24 +122,62 @@ export default function HistoryListItem({ record, isExpanded, toggleExpandRecord
               </TableRow>
             </TableHeader>
             <TableBody>
-              {record.series.map((serie, serieIndex) => (
-                <TableRow key={serieIndex}>
-                  <TableCell className="font-medium">{serieIndex + 1}</TableCell>
-                  <TableCell>{serie.weight} kg</TableCell>
-                  <TableCell className="text-right">{serie.reps}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+  {editableSeries.map((serie, index) => (
+    <TableRow key={index}>
+      <TableCell>{index + 1}</TableCell>
+      <TableCell>
+        <input
+          type="number"
+          value={serie.weight || "0"}
+          onChange={(e) => {
+            const newSeries = [...editableSeries];
+            newSeries[index].weight = parseFloat(e.target.value);
+            setEditableSeries(newSeries);
+          }}
+          className="w-full border rounded px-2 py-1 text-sm"
+        />
+      </TableCell>
+      <TableCell>
+        <input
+          type="number"
+          value={serie.reps || "0"}
+          onChange={(e) => {
+            const newSeries = [...editableSeries];
+            newSeries[index].reps = parseInt(e.target.value);
+            setEditableSeries(newSeries);
+          }}
+          className="w-full border rounded px-2 py-1 text-sm text-right"
+        />
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
           </Table>
 
           {record.notes && (
-            <div className="mt-3 p-3 bg-muted/30 rounded-lg">
-              <p className="text-xs font-medium mb-1">Notas:</p>
-              <p className="text-sm">{record.notes}</p>
-            </div>
+            <div className="mt-3">
+            <p className="text-xs font-medium mb-1">Notas:</p>
+            <textarea
+              value={editableNotes}
+              onChange={(e) => setEditableNotes(e.target.value)}
+              className="w-full border rounded p-2 text-sm"
+              rows={2}
+            />
+          </div>
           )}
+
+<Button
+  variant="secondary"
+  className="mt-4 w-full"
+  onClick={handleEditRecord}
+>
+  Guardar cambios
+</Button>
+
         </CardContent>
       )}
+      
     </Card>
+    
   );
 }

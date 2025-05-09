@@ -33,7 +33,7 @@ export default function ExerciseHeader({ exercise, router, dialogOpen, setDialog
   return (
     <div className="flex items-center justify-between">
 
-<Button
+    <Button
         variant="ghost"
         className="group hidden md:flex"
         onClick={() => router.back()}
